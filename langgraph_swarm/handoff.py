@@ -67,7 +67,7 @@ def create_handoff_tool(
     if description is None:
         description = f"Ask agent '{agent_name}' for help"
 
-    @tool(name, description=description)
+    @tool(name=name, description=description)
     def handoff_to_agent(
         # Annotation is typed as Any instead of StateLike. StateLike
         # trigger validation issues from Pydantic / langchain_core interaction.

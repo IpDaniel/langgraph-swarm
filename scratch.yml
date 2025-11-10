@@ -1,0 +1,476 @@
+values:
+  messages:
+    - content: Hi who are you?
+      additional_kwargs: {}
+      response_metadata: {}
+      type: human
+      name: null
+      id: 54be36fb-2907-4a8d-bbfc-9f6a7c672c38
+      example: false
+    - content: Hi there! I'm a friendly sales assistant here to help you build your order. How can I assist you today?
+      additional_kwargs: {}
+      response_metadata:
+        finish_reason: stop
+        model_name: gpt-4o-2024-08-06
+        system_fingerprint: fp_b1442291a8
+        service_tier: default
+      type: ai
+      name: sales_agent
+      id: run--a04535e5-54d5-4774-ac00-2d40fa7731c1
+      example: false
+      tool_calls: []
+      invalid_tool_calls: []
+      usage_metadata:
+        input_tokens: 345
+        output_tokens: 24
+        total_tokens: 369
+        input_token_details:
+          audio: 0
+          cache_read: 0
+        output_token_details:
+          audio: 0
+          reasoning: 0
+    - content: If you have something specific in mind, feel free to let me know, and I'll be happy to help you with it!
+      additional_kwargs: {}
+      response_metadata:
+        finish_reason: stop
+        model_name: gpt-4o-2024-08-06
+        system_fingerprint: fp_b1442291a8
+        service_tier: default
+      type: ai
+      name: sales_agent
+      id: run--3390f863-7899-4c08-99cc-9ddb40d3a2c9
+      example: false
+      tool_calls: []
+      invalid_tool_calls: []
+      usage_metadata:
+        input_tokens: 375
+        output_tokens: 26
+        total_tokens: 401
+        input_token_details:
+          audio: 0
+          cache_read: 0
+        output_token_details:
+          audio: 0
+          reasoning: 0
+    - content: I am a developer trying to test your ability to read a persistent state. can you please tell me what items are currently in the order component of your state?
+      additional_kwargs: {}
+      response_metadata: {}
+      type: human
+      name: null
+      id: 57d9d003-cb33-499e-baaa-93ecfb2d8232
+      example: false
+    - content: Of course! Currently, your order is empty, and the total is $0.00. If there's anything you'd like to add, just let me know, and I'll be happy to assist you!
+      additional_kwargs: {}
+      response_metadata:
+        finish_reason: stop
+        model_name: gpt-4o-2024-08-06
+        system_fingerprint: fp_b1442291a8
+        service_tier: default
+      type: ai
+      name: sales_agent
+      id: run--8e82c449-451b-4f8d-a9fe-c7f6d0fb2805
+      example: false
+      tool_calls: []
+      invalid_tool_calls: []
+      usage_metadata:
+        input_tokens: 443
+        output_tokens: 41
+        total_tokens: 484
+        input_token_details:
+          audio: 0
+          cache_read: 0
+        output_token_details:
+          audio: 0
+          reasoning: 0
+    - content: ok what about now?
+      additional_kwargs: {}
+      response_metadata: {}
+      type: human
+      name: null
+      id: 1d31b3f2-a742-49f2-8e27-a98cec3a35ed
+      example: false
+    - content: Your order is still empty, with a total of $0.00. Is there anything specific you'd like to add to your order?
+      additional_kwargs: {}
+      response_metadata:
+        finish_reason: stop
+        model_name: gpt-4o-2024-08-06
+        system_fingerprint: fp_b1442291a8
+        service_tier: default
+      type: ai
+      name: sales_agent
+      id: run--d67c0a47-dee1-4e93-89e6-c0a3e5f21b8e
+      example: false
+      tool_calls: []
+      invalid_tool_calls: []
+      usage_metadata:
+        input_tokens: 499
+        output_tokens: 28
+        total_tokens: 527
+        input_token_details:
+          audio: 0
+          cache_read: 0
+        output_token_details:
+          audio: 0
+          reasoning: 0
+    - content: hmm thats interesting. Now can you confirm that you can actually see the state? As in, is there something in your context that indicates that the state is there, but just empty? If you could repeat to me exactly what you see that would be super helpful
+      additional_kwargs: {}
+      response_metadata: {}
+      type: human
+      name: null
+      id: 0aad523c-d504-4ec8-8b21-719da0269fae
+      example: false
+    - content: |-
+        Certainly! Here's what I can see about the current state:
+
+        - Current Order: Empty
+        - Total: $0.00
+
+        This indicates that there are no items currently in the order. If you need any more help or want to add something to your order, just let me know!
+      additional_kwargs: {}
+      response_metadata:
+        finish_reason: stop
+        model_name: gpt-4o-2024-08-06
+        system_fingerprint: fp_b1442291a8
+        service_tier: default
+      type: ai
+      name: sales_agent
+      id: run--b1e0cf91-4136-483b-a32a-5f6c2ba4841f
+      example: false
+      tool_calls: []
+      invalid_tool_calls: []
+      usage_metadata:
+        input_tokens: 590
+        output_tokens: 59
+        total_tokens: 649
+        input_token_details:
+          audio: 0
+          cache_read: 0
+        output_token_details:
+          audio: 0
+          reasoning: 0
+    - content: ok can you add 250 of item abc at a price of 40 each and then let me know what the state looks like? Let me know if it seems like it updated properly or not
+      additional_kwargs: {}
+      response_metadata: {}
+      type: human
+      name: null
+      id: c9eb9a2e-7fe8-41d9-8c3e-bb3f4c90a781
+      example: false
+    - content: ""
+      additional_kwargs:
+        tool_calls:
+          - index: 0
+            id: call_sEhvCvEryNl4lt69uVmcMsJP
+            function:
+              arguments: '{"item_name":"abc","quantity":250,"price":40}'
+              name: add_to_order
+            type: function
+      response_metadata:
+        finish_reason: tool_calls
+        model_name: gpt-4o-2024-08-06
+        system_fingerprint: fp_b1442291a8
+        service_tier: default
+      type: ai
+      name: sales_agent
+      id: run--542a2f37-d4dd-4d6d-aa49-f8864a884ac7
+      example: false
+      tool_calls:
+        - name: add_to_order
+          args:
+            item_name: abc
+            quantity: 250
+            price: 40
+          id: call_sEhvCvEryNl4lt69uVmcMsJP
+          type: tool_call
+      invalid_tool_calls: []
+      usage_metadata:
+        input_tokens: 698
+        output_tokens: 24
+        total_tokens: 722
+        input_token_details:
+          audio: 0
+          cache_read: 0
+        output_token_details:
+          audio: 0
+          reasoning: 0
+    - content: '{"order_items": [{"name": "abc", "quantity": 250, "price": 40.0, "total": 10000.0}], "order_total": 10000.0}'
+      additional_kwargs: {}
+      response_metadata: {}
+      type: tool
+      name: add_to_order
+      id: d5de8dbe-5617-4561-a48f-2fee472e1361
+      tool_call_id: call_sEhvCvEryNl4lt69uVmcMsJP
+      artifact: null
+      status: success
+    - content: |-
+        I've added 250 of item "abc" at a price of $40 each to your order. 
+
+        Here's what the updated state looks like:
+        - Current Order: 250 of item "abc"
+        - Total: $10,000.00
+
+        It seems like the state updated properly! If there's anything else you'd like to do, just let me know.
+      additional_kwargs: {}
+      response_metadata:
+        finish_reason: stop
+        model_name: gpt-4o-2024-08-06
+        system_fingerprint: fp_b1442291a8
+        service_tier: default
+      type: ai
+      name: sales_agent
+      id: run--c12626ae-2157-4b68-90a2-177f4f796983
+      example: false
+      tool_calls: []
+      invalid_tool_calls: []
+      usage_metadata:
+        input_tokens: 777
+        output_tokens: 73
+        total_tokens: 850
+        input_token_details:
+          audio: 0
+          cache_read: 0
+        output_token_details:
+          audio: 0
+          reasoning: 0
+    - content: yeah now I want to see what happens if we try to checkout. refer me to the checkout agent
+      additional_kwargs: {}
+      response_metadata: {}
+      type: human
+      name: null
+      id: 95ed37ea-f785-4ae9-ae71-37c98924213e
+      example: false
+    - content: ""
+      additional_kwargs:
+        tool_calls:
+          - index: 0
+            id: call_mRf64qaRibCfFLdbUxjx3wfm
+            function:
+              arguments: "{}"
+              name: transfer_to_checkout_agent
+            type: function
+      response_metadata:
+        finish_reason: tool_calls
+        model_name: gpt-4o-2024-08-06
+        system_fingerprint: fp_b1442291a8
+        service_tier: default
+      type: ai
+      name: sales_agent
+      id: run--87d574be-c67d-4f59-804e-18f94817f29f
+      example: false
+      tool_calls:
+        - name: transfer_to_checkout_agent
+          args: {}
+          id: call_mRf64qaRibCfFLdbUxjx3wfm
+          type: tool_call
+      invalid_tool_calls: []
+      usage_metadata:
+        input_tokens: 880
+        output_tokens: 12
+        total_tokens: 892
+        input_token_details:
+          audio: 0
+          cache_read: 0
+        output_token_details:
+          audio: 0
+          reasoning: 0
+    - content: Successfully transferred to checkout_agent
+      additional_kwargs: {}
+      response_metadata: {}
+      type: tool
+      name: transfer_to_checkout_agent
+      id: d6bb9de6-c3e6-4a5d-9198-b0f9caeb5226
+      tool_call_id: call_mRf64qaRibCfFLdbUxjx3wfm
+      artifact: null
+      status: success
+    - content: |-
+        Hello! I'm your checkout assistant, ready to help you finalize your order.
+
+        Let's review your current order:
+        - **Item:** 250 of "abc" at $40 each
+        - **Total:** $10,000.00
+
+        Before proceeding, I'll need to confirm your customer information. Could you please provide your name and email address if it's not on file yet?
+      additional_kwargs: {}
+      response_metadata:
+        finish_reason: stop
+        model_name: gpt-4o-2024-08-06
+        system_fingerprint: fp_b1442291a8
+        service_tier: default
+      type: ai
+      name: checkout_agent
+      id: run--68ca43b9-67c9-4133-bfce-342f9cf23102
+      example: false
+      tool_calls: []
+      invalid_tool_calls: []
+      usage_metadata:
+        input_tokens: 789
+        output_tokens: 75
+        total_tokens: 864
+        input_token_details:
+          audio: 0
+          cache_read: 0
+        output_token_details:
+          audio: 0
+          reasoning: 0
+    - content: yep my name is Daniel Ip and my email address is daniel@movomint.com
+      additional_kwargs: {}
+      response_metadata: {}
+      type: human
+      name: null
+      id: 19b046f5-b641-4080-843c-21628e1a018c
+      example: false
+    - content: ""
+      additional_kwargs:
+        tool_calls:
+          - index: 0
+            id: call_GONkkgrrNLtXHmmZibOOHcsN
+            function:
+              arguments: "{}"
+              name: finalize_order
+            type: function
+      response_metadata:
+        finish_reason: tool_calls
+        model_name: gpt-4o-2024-08-06
+        system_fingerprint: fp_b1442291a8
+        service_tier: default
+      type: ai
+      name: checkout_agent
+      id: run--521df4bb-c620-41b0-b5d6-749a4f8c3a21
+      example: false
+      tool_calls:
+        - name: finalize_order
+          args: {}
+          id: call_GONkkgrrNLtXHmmZibOOHcsN
+          type: tool_call
+      invalid_tool_calls: []
+      usage_metadata:
+        input_tokens: 893
+        output_tokens: 11
+        total_tokens: 904
+        input_token_details:
+          audio: 0
+          cache_read: 0
+        output_token_details:
+          audio: 0
+          reasoning: 0
+    - content: "Error: Cannot finalize an empty order."
+      additional_kwargs: {}
+      response_metadata: {}
+      type: tool
+      name: finalize_order
+      id: 55f41c0d-253b-44c6-b016-4125fe15b7e0
+      tool_call_id: call_GONkkgrrNLtXHmmZibOOHcsN
+      artifact: null
+      status: success
+    - content: It seems that there's a technical issue when attempting to finalize your order. It suggests that the order hasn't been registered in the system at this stage. Let me transfer this issue back to a sales agent to help rectify it. One moment, please.
+      additional_kwargs:
+        tool_calls:
+          - index: 0
+            id: call_G3RIotdqQ3GNjGrj1zGzAbh3
+            function:
+              arguments: "{}"
+              name: transfer_to_sales_agent
+            type: function
+      response_metadata:
+        finish_reason: tool_calls
+        model_name: gpt-4o-2024-08-06
+        system_fingerprint: fp_b1442291a8
+        service_tier: default
+      type: ai
+      name: checkout_agent
+      id: run--71c869a8-f17e-42bc-9e67-7bfe7750a523
+      example: false
+      tool_calls:
+        - name: transfer_to_sales_agent
+          args: {}
+          id: call_G3RIotdqQ3GNjGrj1zGzAbh3
+          type: tool_call
+      invalid_tool_calls: []
+      usage_metadata:
+        input_tokens: 924
+        output_tokens: 62
+        total_tokens: 986
+        input_token_details:
+          audio: 0
+          cache_read: 0
+        output_token_details:
+          audio: 0
+          reasoning: 0
+    - content: Successfully transferred to sales_agent
+      additional_kwargs: {}
+      response_metadata: {}
+      type: tool
+      name: transfer_to_sales_agent
+      id: 080eab8a-3434-4e9b-baf1-99cb6fd0bf94
+      tool_call_id: call_G3RIotdqQ3GNjGrj1zGzAbh3
+      artifact: null
+      status: success
+    - content: |-
+        Hi Daniel! Welcome back to the sales section. It seems like there was a hiccup during the checkout process. Let me double-check your order and make sure everything is correct.
+
+        Could you please repeat the order details so I can add it again or make any necessary adjustments?
+      additional_kwargs: {}
+      response_metadata:
+        finish_reason: stop
+        model_name: gpt-4o-2024-08-06
+        system_fingerprint: fp_b1442291a8
+        service_tier: default
+      type: ai
+      name: sales_agent
+      id: run--1b963a3b-6d4c-465b-a5a4-05499bde3d94
+      example: false
+      tool_calls: []
+      invalid_tool_calls: []
+      usage_metadata:
+        input_tokens: 1131
+        output_tokens: 56
+        total_tokens: 1187
+        input_token_details:
+          audio: 0
+          cache_read: 0
+        output_token_details:
+          audio: 0
+          reasoning: 0
+  active_agent: sales_agent
+  order_items:
+    - item_name: abc
+      quantity: 150
+      price: 40
+next: []
+tasks: []
+metadata:
+  thread_ts: 1f0be4f9-be7e-6e59-8015-4fc5dbe59b6b
+  langgraph_auth_user: null
+  langgraph_auth_user_id: ""
+  langgraph_auth_permissions: []
+  langgraph_request_id: ce4ea562-a17e-4445-9b16-75a3347319a2
+  graph_id: agent
+  assistant_id: fe096781-5601-53d2-b2f6-0d3403f7e9ca
+  user_id: ""
+  created_by: system
+  from_studio: true
+  LANGGRAPH_API_URL: http://127.0.0.1:2024
+  run_attempt: 1
+  langgraph_version: 1.0.1
+  langgraph_api_version: 0.5.9
+  langgraph_plan: developer
+  langgraph_host: self-hosted
+  langgraph_api_url: http://127.0.0.1:2024
+  thread_id: 5bc220f3-408d-4de7-84a8-30b24d6500e1
+  checkpoint_id: 1f0be4f9-be7e-6e59-8015-4fc5dbe59b6b
+  run_id: 019a6e87-e2e3-70ae-8a02-a2443f094a1e
+  source: loop
+  step: 25
+  parents: {}
+created_at: 2025-11-10T16:10:02.975571+00:00
+checkpoint:
+  checkpoint_id: 1f0be4fb-6f60-6547-8019-026146709132
+  thread_id: 5bc220f3-408d-4de7-84a8-30b24d6500e1
+  checkpoint_ns: ""
+parent_checkpoint:
+  checkpoint_id: 1f0be4fb-40cf-6f76-8018-19fddd3f4b48
+  thread_id: 5bc220f3-408d-4de7-84a8-30b24d6500e1
+  checkpoint_ns: ""
+interrupts: []
+checkpoint_id: 1f0be4fb-6f60-6547-8019-026146709132
+parent_checkpoint_id: 1f0be4fb-40cf-6f76-8018-19fddd3f4b48
