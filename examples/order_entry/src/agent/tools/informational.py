@@ -1,4 +1,5 @@
 import json
+import yaml
 from typing import Annotated, Any
 from langgraph.prebuilt import InjectedState
 from langchain_core.tools import tool
@@ -93,6 +94,69 @@ def view_customer_schema_tool(
         refer to which inventory levels
     """
     return KorberInterface().check_customer_schema(customer_code=customer_code)
+
+@tool
+def full_order_placing_tool(
+    state: Annotated[Any, InjectedState],
+) -> dict:
+    """Place the full agent_order into the WMS/OMS with all orders.
+    
+    Returns:
+        A message informing the user the status of the attempt to place the order
+    
+    Always clear successfully placed orders from the active state so that they do not 
+    get placed again. Use other tools for this
+    """
+    agent_order: AgentOrder = state["order"]
+    results = []
+    for order in agent_order.orders:
+        results.append(KorberInterface().place_order(order=order))
+    return yaml.dump(results, default_flow_style=False)
+
+@tool
+def single_order_placing_tool(
+    state: Annotated[Any, InjectedState],
+    CustomerOrderNumber: str,
+) -> str:
+    """Place one specific order from the agent_order into the WMS/OMS.
+    
+    Args:
+        CustomerOrderNumber: The customer order number of the order to place
+    
+    Returns:
+        A message informing the user the status of the attempt to place the order
+
+    Always clear successfully placed orders from the active state so that they do not 
+    get placed again. Use other tools for this
+    """
+    agent_order: AgentOrder = state["order"]
+    
+    target_order = None
+    for order in agent_order.orders:
+        if order.order_header.CustomerOrderNumber == CustomerOrderNumber:
+            target_order = order
+            break
+    
+    if target_order is None:
+        return f"Error: Order with CustomerOrderNumber '{CustomerOrderNumber}' not found."
+    
+    try:
+        response = KorberInterface().place_order(order=target_order)
+        
+        if response.Result.Success:
+            return (
+                f"Successfully placed order '{CustomerOrderNumber}'.\n"
+                f"E3PL Order Number: {response.Message.OrderNumber}\n"
+                f"Status Code: {response.Result.Code}"
+            )
+        else:
+            return (
+                f"Failed to place order '{CustomerOrderNumber}'.\n"
+                f"Error: {response.Result.ErrorMessage}\n"
+                f"Status Code: {response.Result.Code}"
+            )
+    except Exception as e:
+        return f"Error placing order '{CustomerOrderNumber}': {str(e)}"
 
 
 @tool
