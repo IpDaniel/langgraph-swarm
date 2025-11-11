@@ -244,10 +244,10 @@ class OrderHeader(KorberModel):
     """Order header information"""
     CompanyCode: str = Field(..., max_length=2, description="E3PL Company Code")
     CustomerCode: str = Field(..., max_length=10, description="E3PL Customer Code")
-    WarehouseCode: Optional[str] = Field(default="", max_length=4, description="E3PL Header Warehouse Code")
     CustomerOrderNumber: str = Field(..., max_length=20, description="Customer Order Number")
-    PoNumber: Optional[str] = Field(default="", max_length=20, description="PO Number")
     ship_to: ShipTo = Field(..., alias="ShipTo", description="Ship-to address")
+    WarehouseCode: Optional[str] = Field(default="", max_length=4, description="E3PL Header Warehouse Code")
+    PoNumber: Optional[str] = Field(default="", max_length=20, description="PO Number")
     sold_to: Optional[SoldTo] = Field(default=None, alias="SoldTo", description="Sold-to address")
     LoadTypeCode: Optional[str] = Field(default="", max_length=4, description="Load Type Code")
     FreightTermCode: Optional[str] = Field(default="", max_length=4, description="Freight Term Code")
@@ -279,6 +279,45 @@ class OrderHeader(KorberModel):
     OrderAlternateReference2: Optional[str] = Field(default="", max_length=20, description="Alternate Reference 2")
 
 
+class PartialOrderHeader(BaseModel): # only for updates
+    """Partial order header update - only include fields you want to change. All fields are optional."""
+    CompanyCode: Optional[str] = Field(default=None, max_length=2, description="E3PL Company Code")
+    CustomerCode: Optional[str] = Field(default=None, max_length=10, description="E3PL Customer Code")
+    CustomerOrderNumber: Optional[str] = Field(default=None, max_length=20, description="Customer Order Number")
+    ship_to: Optional[ShipTo] = Field(default=None, alias="ShipTo", description="Ship-to address")
+    WarehouseCode: Optional[str] = Field(default=None, max_length=4, description="E3PL Header Warehouse Code")
+    PoNumber: Optional[str] = Field(default=None, max_length=20, description="PO Number")
+    sold_to: Optional[SoldTo] = Field(default=None, alias="SoldTo", description="Sold-to address")
+    LoadTypeCode: Optional[str] = Field(default=None, max_length=4, description="Load Type Code")
+    FreightTermCode: Optional[str] = Field(default=None, max_length=4, description="Freight Term Code")
+    CodAmount: Optional[str] = Field(default=None, description="COD Amount")
+    PaymentType: Optional[str] = Field(default=None, max_length=4, description="Payment Type")
+    CarrierName: Optional[str] = Field(default=None, max_length=30, description="Carrier Name")
+    CarrierCode: Optional[str] = Field(default=None, max_length=4, description="Carrier Code or Carrier SCAC")
+    ParcelCarrierAccountNumber: Optional[str] = Field(default=None, max_length=20, description="Carrier Account Number")
+    OrderDate: Optional[str] = Field(default=None, description="Order Date (format: YYYYMMDD or ISO 8601)")
+    OrderToShipDate: Optional[str] = Field(default=None, description="Order To Ship Date (format: YYYYMMDD or ISO 8601)")
+    OrderToArrivepDate: Optional[str] = Field(default=None, description="Order To Arrive Date (format: YYYYMMDD or ISO 8601)")
+    BillToContaceName: Optional[str] = Field(default=None, max_length=30, description="Bill To Contact Name (Carrier Details)")
+    BillToTelephone: Optional[str] = Field(default=None, max_length=20, description="Bill To Phone (Carrier Details)")
+    BillToEmail: Optional[str] = Field(default=None, max_length=250, description="Bill To email (Carrier Details)")
+    ConsigneeContactName: Optional[str] = Field(default=None, max_length=30, description="Consignee Contact Name (Carrier Details)")
+    ConsigneeTelephone: Optional[str] = Field(default=None, max_length=20, description="Consignee Phone (Carrier Details)")
+    ConsigneeEmail: Optional[str] = Field(default=None, max_length=250, description="Consignee email (Carrier Details)")
+    ConsigneeEiN: Optional[str] = Field(default=None, max_length=20, description="Consignee EIN (Carrier Details)")
+    ResidentialFlag: Optional[str] = Field(default=None, max_length=1, description="Residential Flag (Carrier Details)")
+    SignatureRequired: Optional[str] = Field(default=None, max_length=1, description="Signature Required (Carrier Details)")
+    SaturdayDelivery: Optional[str] = Field(default=None, max_length=1, description="Saturday Delivery (Carrier Details)")
+    ParcelMessage: Optional[str] = Field(default=None, max_length=250, description="Parcel Message (Carrier Details)")
+    ParcelReference1: Optional[str] = Field(default=None, max_length=40, description="Reference 1 (Carrier Details)")
+    ParcelReference2: Optional[str] = Field(default=None, max_length=40, description="Reference 2 (Carrier Details)")
+    ParcelReference3: Optional[str] = Field(default=None, max_length=40, description="Reference 3 (Carrier Details)")
+    ParcelReference4: Optional[str] = Field(default=None, max_length=40, description="Reference 4 (Carrier Details)")
+    ParcelReference5: Optional[str] = Field(default=None, max_length=40, description="Reference 5 (Carrier Details)")
+    OrderAlternateReference1: Optional[str] = Field(default=None, max_length=20, description="Alternate Reference 1")
+    OrderAlternateReference2: Optional[str] = Field(default=None, max_length=20, description="Alternate Reference 2")
+
+
 class OrderDetailLine(KorberModel):
     """Order detail line item"""
     ItemCode: str = Field(..., max_length=20, description="Item Code")
@@ -289,6 +328,18 @@ class OrderDetailLine(KorberModel):
     SkuCode: Optional[str] = Field(default="", max_length=4, description="Unit of Measure / SKU Code")
     LineRemarks: Optional[Remarks] = Field(default=None, description="Line Remark")
     EdiDetailData: Optional[List[EdiData]] = Field(default_factory=list, description="EDI Detail Data")
+
+
+class PartialOrderDetailLine(BaseModel):  # only for updates
+    """Partial order detail line update - only include fields you want to change. All fields are optional."""
+    ItemCode: Optional[str] = Field(default=None, max_length=20, description="Item Code")
+    InventoryLevel2: Optional[str] = Field(default=None, max_length=40, description="Inventory Level 2")
+    InventoryLevel3: Optional[str] = Field(default=None, max_length=40, description="Inventory Level 3")
+    InventoryLevel4: Optional[str] = Field(default=None, max_length=40, description="Inventory Level 4")
+    Quantity: Optional[int] = Field(default=None, description="Order Quantity")
+    SkuCode: Optional[str] = Field(default=None, max_length=4, description="Unit of Measure / SKU Code")
+    LineRemarks: Optional[Remarks] = Field(default=None, description="Line Remark")
+    EdiDetailData: Optional[List[EdiData]] = Field(default=None, description="EDI Detail Data")
 
 
 class OrderDetails(KorberModel):

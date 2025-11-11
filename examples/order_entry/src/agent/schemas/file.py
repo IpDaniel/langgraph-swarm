@@ -2,7 +2,18 @@ import base64
 import os
 from pydantic import BaseModel
 from typing import Optional
-from s3_client import S3Client
+# from s3_client import S3Client
+
+class S3Client:
+    def __init__(self, environment: str):
+        self.env = environment
+
+    def download(self, s3_link):
+        pass
+
+    def upload(self, s3_link):
+        pass
+
 
 class StateFile(BaseModel):
     title: str

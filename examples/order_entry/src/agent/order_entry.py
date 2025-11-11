@@ -1,20 +1,29 @@
 import logging
-from langgraph.checkpoint.memory import InMemorySaver
 from langgraph_swarm import create_swarm
-from order_entry.src.agent.state import OrderState
-from order_entry.src.agent.agents import (
-    sales_agent,
-    checkout_agent
+from src.agent.state import OrderState
+from src.agent.agents import (
+    customer_service_agent, 
+    order_decider_agent, 
+    splitter_agent, 
+    order_placing_agent, 
+    parameter_handling_agent, 
+    scheduler_agent
 )
 
 logger = logging.getLogger(__name__)
 
-# Build and compile the swarm with checkpointer
-# Even though Studio says it's not necessary, let's try it to ensure state persistence
-checkpointer = InMemorySaver()
+# Build and compile the swarm with no checkpointer
+
 builder = create_swarm(
-    [sales_agent, checkout_agent],
-    default_active_agent="sales_agent",
+    [
+        customer_service_agent, 
+        order_decider_agent, 
+        splitter_agent, 
+        order_placing_agent, 
+        parameter_handling_agent, 
+        scheduler_agent
+    ],
+    default_active_agent="customer_service_agent",
     state_schema=OrderState,
 )
 app = builder.compile()

@@ -1,20 +1,28 @@
+from typing_extensions import ParamSpecKwargs
 import requests
-from typing import Optional
+import yaml
+from functools import wraps
+from typing import Optional, Callable
 from datetime import datetime
 from src.agent.services.wms_interface.interface import WMSInterface
 from src.agent.services.wms_interface.korber.schemas import (
+    AgentOrder,
+    CreateReplaceOrderMessageBody,
     KorberModel,
     InventoryDetailsQueryRequest,
     InventoryDetailsQueryMessageBody,
-    InventoryDetailsQueryResponse
+    InventoryDetailsQueryResponse,
+    OrderDetails,
+    OrderDetailLine,
+    OrderHeader
 )
 
-class KorberInterface(WMSInterface):
-    def __init__(self, token: str, base_url: str):
-        self.token = token
-        self.base_url = base_url
+# TODO: [API DETAILS NEEDED]: a
 
-        # constants
+class KorberInterface(WMSInterface):
+    def __init__(self):
+        self.token: str = ""
+        self.base_url: str= ""
         self.INVENTORY_LOOKUP_ENDPOINT = None
 
     def get(self, payload: KorberModel, endpoint: str):
@@ -98,3 +106,48 @@ class KorberInterface(WMSInterface):
             endpoint=self.INVENTORY_LOOKUP_ENDPOINT
             )
         return InventoryDetailsQueryResponse(**response_json)
+
+    # TODO: [API DETAILS NEEDED]: need to know how to determine if the header data is available (dropdowns)
+    def check_availability(self, agent_order: AgentOrder) -> str:
+        results = [self.check_availability(order=order) for order in agent_order.orders]
+        return yaml.dump(results, default_flow_style=False)
+
+    # TODO: [API DETAILS NEEDED]: need to know how to determine if the header data is available (dropdowns)
+    def check_availability(self, order: CreateReplaceOrderMessageBody):
+        header = order.order_header
+        details = order.Details
+        return {
+            "header": self.check_availability(header=header),
+            "details": self.check_availability(details=details)
+        }
+
+    # TODO: [API DETAILS NEEDED]: need to know how to determine if the header data is available (dropdowns)
+    def check_availability(self, header: OrderHeader):
+        pass
+
+    def check_availability(self, details: OrderDetails, header: OrderHeader):
+        return [self.check_availability(detail=detail, header=header) for detail in details.DetailLine]
+
+    def check_availability(self, detail: OrderDetailLine, header: OrderHeader):
+        try:
+            inventory_detail: InventoryDetailsQueryResponse = self.lookup_item(
+                company_code=header.CompanyCode,
+                customer_code=header.CustomerCode, 
+                item_code=detail.ItemCode,
+                inventory_level2=detail.InventoryLevel2,
+                inventory_level3=detail.InventoryLevel3,
+                inventory_level4=detail.InventoryLevel4,
+            )
+            if inventory_detail.Details:
+                total_available_quantity = sum(float(item.QuantityAvailable) for item in inventory_detail.Details)
+                is_available = total_available_quantity > detail.Quantity
+                return {"item_code": detail.ItemCode, "is_available": is_available, "inventory_details": [item.model_dump() for item in inventory_detail.Details]}
+            else:
+                return {"item_code": detail.ItemCode, "is_available": False, "inventory_details": []}
+        except Exception as e:
+            print(f"Error checking availability for item {detail.ItemCode}: {e}")
+            return {"item_code": detail.ItemCode, "is_available": False, "error": str(e)}
+
+    # TODO: [API DETAILS NEEDED]: need to know how to get a customer's header mappings
+    def check_customer_schema(self, customer_code: str) -> str:
+        pass

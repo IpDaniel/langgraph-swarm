@@ -3,59 +3,108 @@ from pydantic import Field
 from langgraph_swarm import SwarmState
 from langchain_core.runnables import RunnableConfig
 
-from order_entry.src.agent.schemas.file import StateFile
-from order_entry.src.agent.schemas.customer_context import CustomerContext
-from services.wms_interface.korber.schemas import AgentOrder
+from src.agent.schemas.file import StateFile
+from src.agent.schemas.customer_context import CustomerContext
+from src.agent.services.wms_interface.korber.schemas import AgentOrder
+from src.agent.schemas.customer_context import Detail
 
-# Custom state schema for order management
 class OrderState(SwarmState):
     order: AgentOrder = AgentOrder(orders=[])
     documents: List[StateFile] = Field(default_factory=list)
     customer_context: CustomerContext = Field(default_factory=CustomerContext)
 
-class OrderState(SwarmState):
-    """State schema for the order entry system."""
-    order_items: Optional[list[dict]] = Field(default_factory=list)
-    order_total: Optional[float] = Field(default=0.0)
-    customer_name: Optional[str] = Field(default="")
-    customer_email: Optional[str] = Field(default="")
-    # Required by create_react_agent when using custom state_schema
-    remaining_steps: Optional[int] = Field(default=None)
-
+    remaining_steps: Optional[int] = Field(default=None) # Required for some reason
 
 # Context reducers for different agents
 def order_context_reducer(state: dict, config: RunnableConfig) -> str:
-    """Reducer for sales agent - shows order items and total only."""
-    order_items = state.get("order_items", [])
-    order_total = state.get("order_total", 0.0)
+    """Reducer for sales agent - shows order items only."""
+    order: AgentOrder = state.get("order")
+    if not order or not order.orders:
+        return "Current Order: Empty"
     
-    if not order_items:
-        return "Current Order: Empty\nTotal: $0.00"
+    lines = []
+    for order_idx, korber_order in enumerate(order.orders, 1):
+        if order_idx > 1:
+            lines.append("")
+        
+        header = korber_order.order_header
+        lines.append(f"Order {order_idx}:")
+        lines.append(f"  Customer Order Number: {header.CustomerOrderNumber}")
+        lines.append(f"  PO Number: {header.PoNumber or 'N/A'}")
+        lines.append(f"  Ship To: {header.ship_to.ShipToName}")
+        
+        if korber_order.Details and korber_order.Details.DetailLine:
+            lines.append("  Items:")
+            for line in korber_order.Details.DetailLine:
+                lines.append(f"    - {line.Quantity}x {line.ItemCode}" + 
+                           (f" ({line.InventoryLevel2})" if line.InventoryLevel2 else ""))
+        else:
+            lines.append("  Items: (none)")
     
-    items_text = "\n".join([
-        f"  - {item['quantity']}x {item['name']} @ ${item['price']:.2f} = ${item['total']:.2f}"
-        for item in order_items
-    ])
-    
-    return f"""Current Order:
-{items_text}
-Total: ${order_total:.2f}"""
+    return "\n".join(lines)
 
 
 def full_context_reducer(state: dict, config: RunnableConfig) -> str:
-    """Reducer for checkout agent - shows everything including customer info."""
-    order_items = state.get("order_items", [])
-    order_total = state.get("order_total", 0.0)
-    customer_name = state.get("customer_name", "Not provided")
-    customer_email = state.get("customer_email", "Not provided")
+    """Reducer for checkout agent - shows everything including customer context and documents."""
+    # State is passed as dict, not OrderState object
+    lines = []
     
-    items_text = "\n".join([
-        f"  - {item['quantity']}x {item['name']} @ ${item['price']:.2f}"
-        for item in order_items
-    ]) if order_items else "  (none)"
+    customer_context: CustomerContext = state.get("customer_context")
+    if customer_context and hasattr(customer_context, "details") and customer_context.details:
+        lines.append("Customer Context:")
+        for detail in customer_context.details:
+            lines.append(f"  {detail.code:04d}: {detail.content}")
+        lines.append("")
     
-    return f"""Customer: {customer_name}
-Email: {customer_email}
-Order Items:
-{items_text}
-Order Total: ${order_total:.2f}"""
+    documents: List[StateFile] = state.get("documents")
+    if documents:
+        lines.append("Documents:")
+        for doc in documents:
+            lines.append(f"  - {doc.title} ({doc.s3_link})")
+        lines.append("")
+    
+    order: AgentOrder = state.get("order")
+    if order and order.orders:
+        for order_idx, korber_order in enumerate(order.orders, 1):
+            if order_idx > 1:
+                lines.append("")
+            
+            header = korber_order.order_header
+            lines.append(f"Order {order_idx}:")
+            lines.append(f"  Customer Order Number: {header.CustomerOrderNumber}")
+            lines.append(f"  PO Number: {header.PoNumber or 'N/A'}")
+            lines.append(f"  Company Code: {header.CompanyCode}")
+            lines.append(f"  Customer Code: {header.CustomerCode}")
+            lines.append(f"  Ship To: {header.ship_to.ShipToName}")
+            if header.ship_to.ShipToAdd1:
+                lines.append(f"    {header.ship_to.ShipToAdd1}")
+            if header.ship_to.ShipToCity:
+                city_state = f"{header.ship_to.ShipToCity}"
+                if header.ship_to.ShipToState:
+                    city_state += f", {header.ship_to.ShipToState}"
+                if header.ship_to.ShipToZip:
+                    city_state += f" {header.ship_to.ShipToZip}"
+                lines.append(f"    {city_state}")
+            
+            if header.sold_to:
+                lines.append(f"  Sold To: {header.sold_to.SoldToName or 'N/A'}")
+            
+            if korber_order.Details and korber_order.Details.DetailLine:
+                lines.append("  Items:")
+                for line in korber_order.Details.DetailLine:
+                    item_line = f"    - {line.Quantity}x {line.ItemCode}"
+                    if line.InventoryLevel2:
+                        item_line += f" (Level 2: {line.InventoryLevel2})"
+                    if line.InventoryLevel3:
+                        item_line += f" (Level 3: {line.InventoryLevel3})"
+                    if line.InventoryLevel4:
+                        item_line += f" (Level 4: {line.InventoryLevel4})"
+                    if line.SkuCode:
+                        item_line += f" [SKU: {line.SkuCode}]"
+                    lines.append(item_line)
+            else:
+                lines.append("  Items: (none)")
+    else:
+        lines.append("Current Order: Empty")
+    
+    return "\n".join(lines)
