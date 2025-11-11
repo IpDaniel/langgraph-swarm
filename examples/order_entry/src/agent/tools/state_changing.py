@@ -1,8 +1,7 @@
-import yaml
 from typing import Annotated, Any, Optional
 from langgraph.prebuilt import InjectedState
 from langchain_core.tools import tool
-from examples.order_entry.src.agent.services.wms_interface.korber.interface import KorberInterface
+from src.agent.schemas.customer_context import CustomerContext
 from src.agent.services.wms_interface.korber.schemas import (
     CreateReplaceOrderMessageBody,
     ReceiptDetails,
@@ -13,7 +12,6 @@ from src.agent.services.wms_interface.korber.schemas import (
     PartialOrderHeader,
     PartialOrderDetailLine
 )
-
 
 @tool
 def initiate_order_tool(
@@ -179,7 +177,6 @@ def update_order_header_tool(
         EdiHeaderData=target_order.EdiHeaderData or [],
         Details=target_order.Details
     )
-    
     updated_orders = agent_order.orders.copy()
     updated_orders[target_order_index] = updated_order
     return {"order": AgentOrder(orders=updated_orders)}
@@ -337,6 +334,58 @@ def remove_item_tool(
     updated_orders[target_order_index] = updated_order
     return {"order": AgentOrder(orders=updated_orders)}
 
+@tool
+def modify_context_tool(
+    state: Annotated[Any, InjectedState],
+    context_item_id: int,
+    new_context_content: str
+) -> dict:
+    """Modify an existing customer context detail by its ID.
+    
+    Args:
+        context_item_id: The code/ID of the context detail to modify
+        new_context_content: The new content for the context detail
+    
+    Returns:
+        Dict state update with the modified customer context.
+    """
+    customer_context: CustomerContext = state["customer_context"]
+    customer_context.change_detail(context_item_id, new_context_content)
+    return {"customer_context": customer_context}
+
+@tool
+def add_context_tool(
+    state: Annotated[Any, InjectedState],
+    new_context_content: str
+) -> dict:
+    """Add a new detail to the customer context.
+    
+    Args:
+        new_context_content: The content for the new context detail
+    
+    Returns:
+        Dict state update with the updated customer context containing the new detail.
+    """
+    customer_context: CustomerContext = state["customer_context"]
+    customer_context.add_detail(new_context_content)
+    return {"customer_context": customer_context}
+
+@tool
+def delete_context_tool(
+    state: Annotated[Any, InjectedState],
+    context_item_id: int
+) -> dict:
+    """Delete a customer context detail by its ID.
+    
+    Args:
+        context_item_id: The code/ID of the context detail to delete
+    
+    Returns:
+        Dict state update with the customer context having the detail removed.
+    """
+    customer_context: CustomerContext = state["customer_context"]
+    customer_context.delete_detail(context_item_id)
+    return {"customer_context": customer_context}
 
 @tool
 def remgerging_tool(

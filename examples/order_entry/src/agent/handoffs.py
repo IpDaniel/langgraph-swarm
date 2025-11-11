@@ -30,3 +30,8 @@ transfer_to_scheduler = create_handoff_tool(
     agent_name="scheduler_agent",
     description="Transfer to the scheduling agent to schedule trucks and delivery slots.",
 )
+
+transfer_to_context_manager = create_handoff_tool(
+    agent_name="context_manager_agent",
+    description="Transfer to this agent whenever you notice any kind of discrepancy between the data that you are seeing from the user, and the existing context"
+)

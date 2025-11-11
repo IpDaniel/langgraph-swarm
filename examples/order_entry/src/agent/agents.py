@@ -22,7 +22,10 @@ from src.agent.tools.state_changing import (
     update_order_header_tool,
     remgerging_tool,
     splitter_tool,
-    scheduling_tool
+    scheduling_tool,
+    modify_context_tool,
+    add_context_tool,
+    delete_context_tool
 )
 from src.agent.handoffs import (
     transfer_to_order_placer,
@@ -233,6 +236,28 @@ parameter_handling_agent = create_react_agent(
     ),
     name="parameter_handling_agent",
     state_schema=OrderState,
+)
+
+context_manager_agent = create_react_agent(
+    model=model,
+    tools=[
+        modify_context_tool,
+        add_context_tool,
+        delete_context_tool
+    ],
+    prompt=build_prompt("""
+    You are a context manager responsible for maintaining customer context information for other agents.
+    
+    You typically receive control when another agent detects a discrepancy between existing context and 
+    new information from the user or documentation. Your role is to:
+    
+    1. Evaluate whether the existing context should be updated based on the new information
+    2. Always confirm with the user before making any changes
+    3. Ask clarifying questions if the user's statement is unusual or contradictory
+    4. Transfer back to the most appropriate agent once you've finished (usually the agent that transferred to you)
+    """,
+    full_context_reducer
+    )
 )
 
 scheduler_agent = create_react_agent(
