@@ -8,18 +8,21 @@ from src.agent.state import (
     order_context_reducer,
     full_context_reducer
 )
-from src.agent.tools import (
-    add_items_tool,
+from src.agent.tools.informational import (
     view_customer_schema_tool,
-    update_order_header_tool,
     item_lookup_tool,
-    remgerging_tool,
     check_all_item_availability_tool,
-    splitter_tool,
     judge_split_tool,
-    order_placing_tool,
-    scheduling_tool,
     doc_parsing_tool
+)
+from src.agent.tools.state_changing import (
+    add_items_tool,
+    update_order_header_tool,
+    remgerging_tool,
+    splitter_tool,
+    single_order_placing_tool,
+    full_order_placing_tool,
+    scheduling_tool
 )
 from src.agent.handoffs import (
     transfer_to_order_placer,
@@ -29,7 +32,6 @@ from src.agent.handoffs import (
     transfer_to_scheduler,
     transfer_to_decider
 )
-
 
 # Initialize the model
 model = ChatOpenAI(model="gpt-4o")
@@ -170,7 +172,8 @@ splitter_agent = create_react_agent(
 order_placing_agent = create_react_agent(
     model=model,
     tools=[
-        order_placing_tool,
+        single_order_placing_tool,
+        full_order_placing_tool,
         transfer_to_decider
     ],
     prompt=build_prompt("""

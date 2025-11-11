@@ -1,8 +1,7 @@
 from typing_extensions import ParamSpecKwargs
 import requests
 import yaml
-from functools import wraps
-from typing import Optional, Callable
+from typing import Optional
 from datetime import datetime
 from src.agent.services.wms_interface.interface import WMSInterface
 from src.agent.services.wms_interface.korber.schemas import (
@@ -14,16 +13,17 @@ from src.agent.services.wms_interface.korber.schemas import (
     InventoryDetailsQueryResponse,
     OrderDetails,
     OrderDetailLine,
-    OrderHeader
+    OrderHeader,
+    CreateReplaceOrderRequest,
+    OrderResponse
 )
-
-# TODO: [API DETAILS NEEDED]: a
 
 class KorberInterface(WMSInterface):
     def __init__(self):
         self.token: str = ""
         self.base_url: str= ""
         self.INVENTORY_LOOKUP_ENDPOINT = None
+        self.CREATE_REPLACE_ORDER_ENDPOINT = None
 
     def get(self, payload: KorberModel, endpoint: str):
         headers = {'Authorization': f"Bearer {self.token}"}
@@ -151,3 +151,17 @@ class KorberInterface(WMSInterface):
     # TODO: [API DETAILS NEEDED]: need to know how to get a customer's header mappings
     def check_customer_schema(self, customer_code: str) -> str:
         pass
+
+    def place_order(self, order: CreateReplaceOrderMessageBody):
+        payload = CreateReplaceOrderRequest(
+            SourceSystemCode="MovoMind",
+            MessageId=f"lookup_{datetime.utcnow().timestamp()}",
+            CreationTime=datetime.utcnow(),
+            MessageBody=order
+        )
+
+        response_json = self.get(
+            payload=payload, 
+            endpoint=self.INVENTORY_LOOKUP_ENDPOINT
+            )
+        return OrderResponse(**response_json)

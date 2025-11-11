@@ -12,8 +12,6 @@ from src.agent.agents import (
 
 logger = logging.getLogger(__name__)
 
-# Build and compile the swarm with no checkpointer
-
 builder = create_swarm(
     [
         customer_service_agent, 
